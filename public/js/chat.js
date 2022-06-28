@@ -9,7 +9,7 @@ const $messages=document.querySelector("#messages");
 const $msgTemplate=document.querySelector("#message-template").innerHTML;
 const $locationTemplate=document.querySelector("#location-template").innerHTML;
 
-const {username,room}=qs.parse(location.search,{ignoreQueryPrefix:true});
+const {username,room}=Qs.parse(location.search,{ignoreQueryPrefix:true});
 
 $.addEventListener("submit",(e)=>{
     e.preventDefault();
