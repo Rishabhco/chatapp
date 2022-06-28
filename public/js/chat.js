@@ -9,6 +9,8 @@ const $messages=document.querySelector("#messages");
 const $msgTemplate=document.querySelector("#message-template").innerHTML;
 const $locationTemplate=document.querySelector("#location-template").innerHTML;
 
+const {username,room}=qs.parse(location.search,{ignoreQueryPrefix:true});
+
 $.addEventListener("submit",(e)=>{
     e.preventDefault();
     $formButton.setAttribute("disabled","disabled");
@@ -58,3 +60,5 @@ socket.on('location',(link)=>{
     })
     $messages.insertAdjacentHTML("beforeend",html);
 })
+
+socket.emit("join",{username,room});
