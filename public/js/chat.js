@@ -12,6 +12,19 @@ const $sidebarTemplate=document.querySelector("#sidebar-template").innerHTML;
 
 const {username,room}=Qs.parse(location.search,{ignoreQueryPrefix:true});
 
+const autoscroll=()=>{
+    const $newMessage=$messages.lastElementChild;
+    const newMessagesStyle=getComputedStyle($newMessage)
+    const newMessageMargin=parseInt(newMessagesStyle.marginBottom)
+    const newMessageHeight=$newMessage.offsetHeight+newMessageMargin;
+    const visibleHeight=$messages.offsetHeight;
+    const containerHeight=$messages.scrollHeight;
+    const scrollOffset=$messages.scrollTop+visibleHeight;
+    if(containerHeight -newMessageHeight<=scrollOffset){
+        $messages.scrollTop=$messages.scrollHeight;
+    }
+}
+
 $.addEventListener("submit",(e)=>{
     e.preventDefault();
     $formButton.setAttribute("disabled","disabled");
@@ -34,6 +47,7 @@ socket.on("message",(message)=>{
         createdAt:moment(message.createdAt).format("h:mm a")
     })
     $messages.insertAdjacentHTML("beforeend",html);
+    autoscroll();
 })
 
 document.querySelector("#send-location").addEventListener("click",(e)=>{
@@ -62,6 +76,7 @@ socket.on('location',(link)=>{
         createdAt:moment(link.createdAt).format("h:mm a")
     })
     $messages.insertAdjacentHTML("beforeend",html);
+    autoscroll();
 })
 
 socket.emit("join",{username,room},(error)=>{
