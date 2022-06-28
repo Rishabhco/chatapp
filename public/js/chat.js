@@ -8,6 +8,7 @@ const $messages=document.querySelector("#messages");
 
 const $msgTemplate=document.querySelector("#message-template").innerHTML;
 const $locationTemplate=document.querySelector("#location-template").innerHTML;
+const $sidebarTemplate=document.querySelector("#sidebar-template").innerHTML;
 
 const {username,room}=Qs.parse(location.search,{ignoreQueryPrefix:true});
 
@@ -28,6 +29,7 @@ $.addEventListener("submit",(e)=>{
 
 socket.on("message",(message)=>{
     const html=Mustache.render($msgTemplate,{
+        username:message.username,
         message:message.text,
         createdAt:moment(message.createdAt).format("h:mm a")
     })
@@ -55,10 +57,25 @@ document.querySelector("#send-location").addEventListener("click",(e)=>{
 socket.on('location',(link)=>{
     console.log("the location is:",link);
     const html=Mustache.render($locationTemplate,{
+        username:link.username,
         link:link.url,
         createdAt:moment(link.createdAt).format("h:mm a")
     })
     $messages.insertAdjacentHTML("beforeend",html);
 })
 
-socket.emit("join",{username,room});
+socket.emit("join",{username,room},(error)=>{
+    if(error){
+        alert(error)
+        location.href="/"
+    }
+});
+
+socket.on("roomData",({room,users})=>{
+    console.log(room,users);
+    const html=Mustache.render($sidebarTemplate,{
+        room,
+        users,
+    })
+    document.querySelector("#sidebar").innerHTML=html;
+})
